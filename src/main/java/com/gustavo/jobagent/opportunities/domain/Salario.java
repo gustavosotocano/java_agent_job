@@ -21,6 +21,18 @@ public record Salario(
         moneda = (moneda != null) ? moneda.strip().toUpperCase() : null;
     }
 
+    public static Salario mensual(BigDecimal minimo, BigDecimal maximo, String moneda) {
+        return new Salario(minimo, maximo, moneda, PeriodoSalarial.MENSUAL);
+    }
+
+    public static Salario anual(BigDecimal minimo, BigDecimal maximo, String moneda) {
+        return new Salario(minimo, maximo, moneda, PeriodoSalarial.ANUAL);
+    }
+
+    public static Salario hora(BigDecimal minimo, BigDecimal maximo, String moneda) {
+        return new Salario(minimo, maximo, moneda, PeriodoSalarial.HORA);
+    }
+
     public enum PeriodoSalarial {
         HORA,
         MENSUAL,

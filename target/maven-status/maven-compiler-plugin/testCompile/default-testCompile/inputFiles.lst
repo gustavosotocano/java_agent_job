@@ -1,8 +1,0 @@
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/JobAgentApplicationTests.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/adapter/in/web/BuscarOfertasControllerTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/adapter/in/web/BuscarOfertasIntegrationTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/adapter/out/FuenteOfertasSimuladaAdapterTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/application/service/BuscarOfertasServiceTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/domain/CriteriosBusquedaTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/domain/OfertaLaboralTest.java
-/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/src/test/java/com/gustavo/jobagent/opportunities/domain/SalarioTest.java

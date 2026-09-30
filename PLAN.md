@@ -4,7 +4,7 @@
 
 Construir un agente de búsqueda y evaluación de oportunidades laborales aplicando SOLID, Clean Architecture, arquitectura hexagonal, DDD táctico, testing y criterios para evitar abstracciones innecesarias.
 
-La entrada inicial será una oferta pegada como texto y un perfil explícitamente registrado. El alcance incluye una lista configurable de portales para buscar ofertas públicas: LinkedIn, Indeed y Glassdoor como fuentes candidatas, sin utilizar cuentas personales. La búsqueda comenzará con una fuente simulada; las integraciones reales se incorporarán después de verificar el acceso disponible en cada portal. El resultado incluirá coincidencias, brechas y preguntas. No se enviarán postulaciones automáticamente.
+El primer incremento implementable será BuscarOfertasDeEmpleo (UC-001), con criterios explícitos y fuente simulada. La evaluación posterior aceptará una oferta pegada como texto o adquirida por búsqueda y un perfil explícitamente registrado. El alcance incluye una lista configurable de portales para buscar ofertas públicas: LinkedIn, Indeed y Glassdoor como fuentes candidatas, sin utilizar cuentas personales. La búsqueda comenzará con una fuente simulada; las integraciones reales se incorporarán después de verificar el acceso disponible en cada portal. El resultado incluirá coincidencias, brechas y preguntas. No se enviarán postulaciones automáticamente.
 
 ## Hitos
 
@@ -84,6 +84,17 @@ En cada hito: explicar el problema, implementar un incremento pequeño, recorrer
 
 M3 organizará un recorrido vertical completo dentro del bounded context; discutiremos vertical slice y sus límites sin romper las dependencias. Pruebas: dominio → casos de uso con fakes → adaptadores → integración. Añadir PostgreSQL/LLM real solo cuando su hito lo necesite.
 
+## Documentación y memoria
+
+[docs/README.md](docs/README.md) contiene el índice y la política de mantenimiento. Cada caso de uso tendrá un archivo Markdown propio. Primera especificación: [UC-001 — Buscar ofertas de empleo](docs/casos-de-uso/UC-001-buscar-ofertas.md).
+
 ## Próximo paso
 
-M1: escribir tres ejemplos de oferta/perfil y dos búsquedas, decidir reglas de compatibilidad, modelar fuentes/procedencias y dibujar el aggregate antes de programarlo. No establecer un porcentaje de compatibilidad arbitrario como primera regla.
+Implementar UC-001 como incremento vertical de M1–M3: criterios y oferta normalizada, puertos, servicio, adaptador simulado, endpoint y verificación de filtros y errores. Su especificación está definida; su código todavía está pendiente.
+
+Después, escribir tres ejemplos de oferta/perfil, decidir reglas de compatibilidad y dibujar el aggregate de evaluación. No establecer un porcentaje de compatibilidad arbitrario como primera regla.
+
+## Historial del plan
+
+- 2026-09-30: se incorpora docs/ como memoria versionada y se prioriza UC-001 con fuente simulada. Se conservan los hitos de persistencia, portales públicos, LLM y agente.
+

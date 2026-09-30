@@ -1,0 +1,11 @@
+com/gustavo/jobagent/JobAgentApplicationTests.class
+com/gustavo/jobagent/opportunities/application/service/BuscarOfertasServiceTest$2.class
+com/gustavo/jobagent/opportunities/application/service/BuscarOfertasServiceTest$1.class
+com/gustavo/jobagent/opportunities/adapter/out/FuenteOfertasSimuladaAdapterTest.class
+com/gustavo/jobagent/opportunities/adapter/in/web/BuscarOfertasIntegrationTest.class
+com/gustavo/jobagent/opportunities/application/service/BuscarOfertasServiceTest$FakeBuscarOfertasPort.class
+com/gustavo/jobagent/opportunities/domain/CriteriosBusquedaTest.class
+com/gustavo/jobagent/opportunities/application/service/BuscarOfertasServiceTest.class
+com/gustavo/jobagent/opportunities/domain/OfertaLaboralTest.class
+com/gustavo/jobagent/opportunities/domain/SalarioTest.class
+com/gustavo/jobagent/opportunities/adapter/in/web/BuscarOfertasControllerTest.class

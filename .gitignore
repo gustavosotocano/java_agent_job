@@ -23,3 +23,12 @@
 hs_err_pid*
 replay_pid*
 target/
+.gradle/
+build/
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+.env*

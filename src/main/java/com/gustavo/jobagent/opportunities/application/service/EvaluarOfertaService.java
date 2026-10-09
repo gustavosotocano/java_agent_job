@@ -23,6 +23,6 @@ public class EvaluarOfertaService implements EvaluarOfertaUseCase {
         Objects.requireNonNull(comando, "El comando de evaluación no puede ser nulo");
 
         EvaluacionOferta evaluacion = EvaluacionOferta.evaluar(comando.oferta(), comando.perfil());
-        return repository.guardar(evaluacion);
+        return repository.guardarConEvidencia(evaluacion, comando.perfil(), comando.oferta());
     }
 }

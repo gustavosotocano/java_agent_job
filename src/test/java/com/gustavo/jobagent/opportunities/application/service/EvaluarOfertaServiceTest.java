@@ -55,7 +55,8 @@ class EvaluarOfertaServiceTest {
                 .tecnologias(Set.of("Java", "Spring Boot"))
                 .build();
 
-        when(repository.guardar(any(EvaluacionOferta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.guardarConEvidencia(any(EvaluacionOferta.class), any(PerfilProfesional.class), any(OfertaLaboral.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         EvaluarOfertaCommand comando = new EvaluarOfertaCommand(oferta, perfil);
         EvaluacionOferta resultado = service.evaluar(comando);
@@ -66,8 +67,34 @@ class EvaluarOfertaServiceTest {
         assertThat(resultado.estado()).isEqualTo(EstadoEvaluacion.COMPATIBLE);
 
         ArgumentCaptor<EvaluacionOferta> captor = ArgumentCaptor.forClass(EvaluacionOferta.class);
-        verify(repository).guardar(captor.capture());
+        verify(repository).guardarConEvidencia(captor.capture(), org.mockito.ArgumentMatchers.eq(perfil), org.mockito.ArgumentMatchers.eq(oferta));
         assertThat(captor.getValue().estado()).isEqualTo(EstadoEvaluacion.COMPATIBLE);
+    }
+
+    @Test
+    @DisplayName("Una segunda evaluación del mismo par conserva otro id")
+    void segundaEvaluacionNoReemplazaLaPrimera() {
+        OfertaLaboral oferta = OfertaLaboral.builder()
+                .idFuente("sim-001")
+                .fuenteId("SIMULADA")
+                .titulo("Backend Java Engineer")
+                .modalidad(ModalidadTrabajo.REMOTE)
+                .tecnologias(Set.of("Java"))
+                .build();
+        PerfilProfesional perfil = PerfilProfesional.builder()
+                .id("perf-100")
+                .nombre("Gustavo")
+                .tituloPrincipal("Java Developer")
+                .modalidadesAceptadas(Set.of(ModalidadTrabajo.REMOTE))
+                .tecnologias(Set.of("Java"))
+                .build();
+        when(repository.guardarConEvidencia(any(), any(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        EvaluacionOferta primera = service.evaluar(new EvaluarOfertaCommand(oferta, perfil));
+        EvaluacionOferta segunda = service.evaluar(new EvaluarOfertaCommand(oferta, perfil));
+
+        assertThat(primera.id()).isNotEqualTo(segunda.id());
+        verify(repository, org.mockito.Mockito.times(2)).guardarConEvidencia(any(), any(), any());
     }
 
     @Test

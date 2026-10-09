@@ -14,7 +14,7 @@ El primer incremento implementable será BuscarOfertasDeEmpleo (UC-001), con cri
 | M1 — Dominio | Glosario, reglas, entidades, value objects, aggregate EvaluacionOferta y evento EvaluacionCompletada | Pruebas de invariantes sin Spring ni LLM |
 | M2 — Aplicación | Registrar oferta, evaluar y consultar; BuscarOfertasPort; repositorio en memoria, fuente y modelo simulados | Búsqueda y evaluación reproducibles sin acceso externo |
 | M3 — REST | DTOs, validación, errores, búsqueda y configuración de fuentes; composición Spring | Flujo buscar → registrar → evaluar → consultar probado por HTTP |
-| M4 — Persistencia | PostgreSQL, migraciones, ofertas, fuentes y búsquedas; idempotencia y deduplicación | Datos sobreviven reinicio; reimportar ofertas no las duplica |
+| M4 — Persistencia (entregado en este incremento) | PostgreSQL, migraciones, evaluaciones con evidencia, ofertas con procedencia, fuentes y registro de búsquedas | La evaluación se lee igual tras reiniciar; reimportar no duplica; buscar registra el resultado y no guarda ofertas ni evaluaciones |
 | M4.1 — Portales públicos | Verificar acceso de cada portal; implementar adaptadores disponibles, normalización y fallos parciales | Al menos una fuente real verificada; fuentes pendientes declaradas y fallos aislados |
 | M5 — LLM | Adaptador intercambiable, salida estructurada, validación, timeouts y errores | Respuestas inválidas o fallos del proveedor no corrompen dominio |
 | M6 — Agente | Herramientas buscarOfertas, consultarPerfil, consultarOferta, guardarEvaluacion; ejecución acotada | Llamadas autorizadas, máximo de pasos y finalización observable |
@@ -46,9 +46,9 @@ Lista configurable de fuentes con identificador, nombre, URL base y estado (simu
 1. Recibir criterios: cargo, ubicación, modalidad y tecnologías; salario solo cuando la fuente lo publique.
 2. Consultar únicamente fuentes habilitadas con adaptador disponible.
 3. Normalizar resultados a OfertaLaboral con título, empresa, descripción, ubicación, modalidad, salario opcional, URL original, identificador de la fuente y fechas disponibles.
-4. Deduplicar, conservando todas las procedencias y el momento de captura.
-5. Registrar ofertas nuevas y evaluar contra el perfil.
-6. Devolver resultados junto con fuentes consultadas, advertencias y fallos parciales.
+4. Deduplicar la respuesta de una misma fuente por su identificador estable. No fusionar ofertas de portales distintos.
+5. Registrar el resultado de la búsqueda. Este paso no registra ofertas ni las evalúa.
+6. Devolver resultados junto con fuentes consultadas, advertencias y fallos parciales. Registrar la oferta y evaluarla son casos de uso aparte. La reimportación de una oferta conserva procedencias y no duplica la misma fuente y dirección pública.
 
 ### Puertos y adaptadores previstos
 
@@ -82,7 +82,7 @@ Dominio no importa Spring, HTTP, JPA ni SDKs de IA. Aplicación depende de domin
 
 En cada hito: explicar el problema, implementar un incremento pequeño, recorrer la ejecución y comprobar comportamiento. Usar SOLID con ejemplos concretos: responsabilidad única en reglas/orquestación/HTTP; inversión de dependencias al cambiar el LLM; contratos pequeños y adaptadores sustituibles. Comparar doubles: dummy, stub, fake, spy y mock cuando aporten a una prueba.
 
-M3 organizará un recorrido vertical completo dentro del bounded context; discutiremos vertical slice y sus límites sin romper las dependencias. Pruebas: dominio → casos de uso con fakes → adaptadores → integración. Añadir PostgreSQL/LLM real solo cuando su hito lo necesite.
+M3 organizó el recorrido de búsqueda por HTTP. Pruebas: dominio → casos de uso con fakes → adaptadores → integración contra PostgreSQL. El LLM real queda para M5.
 
 ## Documentación y memoria
 
@@ -90,11 +90,12 @@ M3 organizará un recorrido vertical completo dentro del bounded context; discut
 
 ## Próximo paso
 
-Implementar UC-001 como incremento vertical de M1–M3: criterios y oferta normalizada, puertos, servicio, adaptador simulado, endpoint y verificación de filtros y errores. Su especificación está definida; su código todavía está pendiente.
+M4 queda cerrado para este incremento: la evaluación y su evidencia sobreviven al reinicio, reimportar una oferta no la duplica, y cada búsqueda queda registrada sin guardar ofertas ni evaluaciones. LinkedIn, Indeed y Glassdoor siguen pendientes y deshabilitadas. El LLM no está integrado.
 
-Después, escribir tres ejemplos de oferta/perfil, decidir reglas de compatibilidad y dibujar el aggregate de evaluación. No establecer un porcentaje de compatibilidad arbitrario como primera regla.
+El siguiente hito es M4.1: verificar el acceso de cada portal antes de implementar un adaptador. No hay integración real prometida.
 
 ## Historial del plan
 
 - 2026-09-30: se incorpora docs/ como memoria versionada y se prioriza UC-001 con fuente simulada. Se conservan los hitos de persistencia, portales públicos, LLM y agente.
+- 2026-10-09: M4 persiste evaluaciones, ofertas y búsquedas. Buscar sigue sin registrar ofertas ni evaluar. Los portales reales y el LLM siguen pendientes.
 

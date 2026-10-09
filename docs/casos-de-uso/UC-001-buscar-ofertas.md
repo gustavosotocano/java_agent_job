@@ -1,17 +1,17 @@
 # UC-001 — Buscar ofertas de empleo
 
-- Estado: Implementado y verificado (M1–M3).
-- Última actualización: 2026-09-30.
+- Estado: Implementado. Cada búsqueda queda registrada. Buscar no registra ofertas ni evalúa.
+- Última actualización: 2026-10-09.
 - Actor: persona que busca oportunidades laborales.
-- Hitos: primer incremento de M1–M3 implementado; integración pública real proyectada en M4.1.
+- Hitos: M1–M3 entregados. M4 persiste el registro de la búsqueda y el estado de las fuentes. Los portales reales siguen en M4.1 y el LLM en M5.
 
 ## Objetivo
 
-Recibir criterios explícitos y devolver ofertas coincidentes con procedencia verificable. El primer incremento usa datos simulados reproducibles y funciona sin LLM, base de datos ni servicios externos.
+Recibir criterios explícitos y devolver ofertas coincidentes con procedencia verificable. El incremento actual usa la fuente simulada, sin LLM ni portales reales. Cada búsqueda se guarda con sus criterios, fuentes, advertencias y resultado.
 
 ## Alcance
 
-Búsqueda y normalización de resultados. Buscar no registra ofertas ni ejecuta evaluaciones automáticamente en este incremento. El flujo completo buscar → registrar → evaluar → consultar se construye después mediante casos de uso separados.
+Búsqueda, normalización de resultados y registro del resultado de esa búsqueda. Buscar no inserta ofertas ni evaluaciones, y no invoca esos casos de uso. Registrar una oferta y evaluarla siguen siendo pasos separados.
 
 Quedan fuera: postulaciones, login en portales, scraping de sesiones privadas, inferencia salarial y ranking con IA.
 
@@ -21,7 +21,7 @@ Existe al menos una fuente simulada habilitada y conectada al puerto de salida.
 
 ## Entrada propuesta
 
-Endpoint futuro: `POST /api/ofertas/busquedas`.
+Endpoint: `POST /api/ofertas/busquedas`. El cuerpo de la respuesta no cambia con la persistencia.
 
 ```json
 {
@@ -73,6 +73,7 @@ Datos y URL del ejemplo son ficticios. La implementación debe conservar la fech
 5. Eliminar duplicados de la misma fuente por identificador estable.
 6. Ordenar por fuenteId e idFuente para obtener resultados reproducibles y aplicar el límite global.
 7. Devolver ofertas, fuentes consultadas y advertencias.
+8. Confirmar el registro de la búsqueda antes de devolver o de propagar el error de disponibilidad. El resultado es `CON_RESULTADOS`, `RESULTADO_VACIO`, `FALLO_PARCIAL`, `BUSQUEDA_FALLIDA` o `SIN_FUENTES_HABILITADAS`.
 
 ## Reglas iniciales de coincidencia
 
@@ -87,12 +88,13 @@ Estas reglas corresponden al primer adaptador simulado; el mapeo de filtros de c
 
 ## Alternativas y errores
 
-- Criterios inválidos: error de validación; el adaptador HTTP lo traduce a 400.
-- Búsqueda correcta sin coincidencias: 200 con lista vacía.
+- Criterios inválidos: error de validación; el adaptador HTTP lo traduce a 400. No queda registro.
+- Búsqueda correcta sin coincidencias: 200 con lista vacía y registro `RESULTADO_VACIO`.
 - Fuente deshabilitada: no se consulta.
-- Ninguna fuente disponible: error explícito de disponibilidad; HTTP 503 propuesto.
-- Algunas fuentes fallan: devolver resultados válidos con advertencias estructuradas por fuente.
-- Todas las fuentes fallan: error de disponibilidad, no una búsqueda vacía exitosa.
+- Ninguna fuente habilitada: registro `SIN_FUENTES_HABILITADAS` y después error de disponibilidad (HTTP 503).
+- Algunas fuentes fallan y alguna responde: resultados válidos, advertencias y registro `FALLO_PARCIAL`.
+- Todas las fuentes fallan: registro `BUSQUEDA_FALLIDA` y después error de disponibilidad. No es una búsqueda vacía exitosa.
+- Hay ofertas y ninguna advertencia: registro `CON_RESULTADOS`.
 
 ## Puertos y adaptadores previstos
 
@@ -104,6 +106,8 @@ Estas reglas corresponden al primer adaptador simulado; el mapeo de filtros de c
 | Contrato de fuente | BuscarOfertasPort | opportunities/application/port/out |
 | Datos reproducibles | FuenteOfertasSimuladaAdapter | opportunities/adapter/out |
 | HTTP y validación | BuscarOfertasController | opportunities/adapter/in/web |
+| Registro de la búsqueda | RegistroBusquedaRepository | opportunities/application/port/out |
+| Estado de las fuentes | FuenteConfiguradaRepository | opportunities/application/port/out |
 | Composición | Configuración Spring | configuration |
 
 Se conserva el nombre BuscarOfertasPort del plan existente. Dominio y aplicación no dependen de HTTP, Spring, SDKs de portales ni proveedores de IA. No se define un aggregate para búsqueda hasta encontrar invariantes que lo justifiquen.
@@ -121,15 +125,18 @@ Se conserva el nombre BuscarOfertasPort del plan existente. Dominio y aplicació
 - Una fuente fallida y otra correcta producen resultados y advertencia; el fallo total es explícito.
 - Los resultados no exceden el límite solicitado.
 - Salario y fecha ausentes permanecen desconocidos.
+- Una búsqueda con ofertas no aumenta las ofertas registradas ni las evaluaciones.
+- Un resultado vacío, un fallo total y una búsqueda sin fuentes habilitadas quedan distinguibles al leer el registro.
 
-La verificación prevista usa pruebas del caso de uso con fuentes falsas y pruebas HTTP al incorporar el endpoint. Este documento no afirma que esas pruebas ni el endpoint existan.
+La verificación usa pruebas del caso de uso con fuentes falsas, la prueba HTTP del endpoint y la prueba de persistencia del registro.
 
 ## Decisiones y pendientes
 
 Confirmado: comenzar con fuente simulada y búsqueda determinista; IA posterior para evaluación.
 
-Pendiente: implementar el caso, concretar catálogo configurable y verificar mecanismos permitidos de integración para LinkedIn, Indeed, Glassdoor y otras fuentes. No se promete acceso funcional a estos portales.
+Pendiente: verificar mecanismos permitidos de integración para LinkedIn, Indeed, Glassdoor y otras fuentes. Esas fuentes quedan sembradas como `PENDIENTE` y deshabilitadas. No se promete acceso funcional a estos portales.
 
 ## Historial
 
 - 2026-09-30: definición inicial del primer caso de uso implementable.
+- 2026-10-09: la búsqueda se registra en PostgreSQL y sigue sin registrar ofertas ni evaluar.

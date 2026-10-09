@@ -6,8 +6,8 @@ Este directorio conserva los casos de uso y decisiones de implementación junto 
 
 | Identificador | Caso | Estado |
 |---|---|---|
-| UC-001 | [Buscar ofertas de empleo](casos-de-uso/UC-001-buscar-ofertas.md) | Implementado y verificado (M1-M3) |
-| UC-002 | [Evaluar oferta de empleo](casos-de-uso/UC-002-evaluar-oferta.md) | Implementado y verificado (M1-M3) |
+| UC-001 | [Buscar ofertas de empleo](casos-de-uso/UC-001-buscar-ofertas.md) | Implementado. La búsqueda se registra y no guarda ofertas ni evaluaciones |
+| UC-002 | [Evaluar oferta de empleo](casos-de-uso/UC-002-evaluar-oferta.md) | Implementado. La evaluación y su evidencia se recuperan después de reiniciar |
 
 ## Decisiones arquitectónicas y patrones
 
@@ -18,7 +18,7 @@ Este directorio conserva los casos de uso y decisiones de implementación junto 
 - [Handoff 1 — Base técnica M0 y especificación UC-001](handsoff/handsoff_1.md)
 - [Handoff 2 — Implementación integral de UC-001 y UC-002](handsoff/handsoff_2.md)
 
-Próximos casos por especificar: registrar perfil, registrar oferta, evaluar oferta y consultar evaluación. No se consideran implementados por aparecer en el plan.
+Registrar una oferta y consultar la evaluación guardada forman parte de la persistencia de M4. Registrar perfil sigue sin ficha ni implementación. Los portales reales y el LLM no están hechos.
 
 ## Cómo mantener esta memoria
 

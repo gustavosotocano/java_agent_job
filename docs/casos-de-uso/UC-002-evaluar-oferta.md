@@ -1,9 +1,9 @@
 # UC-002 — Evaluar oferta de empleo
 
-- Estado: Especificado e implementado (M1–M3).
-- Última actualización: 2026-09-30.
+- Estado: Implementado. La evaluación y su evidencia se recuperan después de reiniciar.
+- Última actualización: 2026-10-09.
 - Actor: Candidato en búsqueda de empleo.
-- Hitos: Modelo de dominio y evaluación determinista en M1–M3; enriquecimiento con LLM proyectado en M5.
+- Hitos: Modelo de dominio y evaluación determinista en M1–M3. M4 persiste el agregado y las copias de perfil y oferta. El enriquecimiento con LLM sigue proyectado en M5.
 
 ## Objetivo y actor
 
@@ -19,12 +19,13 @@
 - Contraste de expectativas salariales cuando ambos datos estén explícitamente informados con misma moneda y período.
 - Detección de datos faltantes o no publicados como `DatoPendiente` (sin inventar salarios ni penalizar con cero).
 - Generación del Aggregate Root `EvaluacionOferta` con trazabilidad temporal (`fechaEvaluacion`).
-- Almacenamiento en repositorio en memoria para trazabilidad y consulta.
+- Persistencia de solo inserción del agregado y de una copia inmutable del perfil y de la oferta usados en esa evaluación.
+- Consulta de esa evaluación después de reiniciar el proceso, con salario ausente conservado como ausente.
 
 ### Exclusiones
 - Inferencia mediante modelos LLM (se incorporará como puerto de enriquecimiento en Hito M5).
-- Persistencia en base de datos relacional PostgreSQL (Hito M4).
 - Postulación automática a plataformas externas.
+- Reescritura de una evaluación ya guardada. Una segunda evaluación del mismo par es otro agregado.
 - Asunción arbitraria de porcentajes numéricos de compatibilidad.
 
 ## Precondiciones
@@ -143,8 +144,8 @@
    - `NO_COMPATIBLE`: si existe al menos una brecha bloqueante o no hay ninguna coincidencia tecnológica.
    - `COMPATIBLE_CON_BRECHAS`: si hay al menos una coincidencia y existen brechas no bloqueantes.
    - `COMPATIBLE`: si hay coincidencias y cero brechas.
-6. Se persiste la `EvaluacionOferta` generada a través de `EvaluacionOfertaRepository`.
-7. Se retorna la `EvaluacionOferta` resultante.
+6. Se persiste la `EvaluacionOferta` generada, junto con la copia del perfil y de la oferta del comando, a través de `EvaluacionOfertaRepository`. `idOferta` guarda `OfertaLaboral.idFuente()`.
+7. Se retorna la `EvaluacionOferta` resultante. La consulta posterior devuelve el agregado y esas copias. Una evaluación nueva no modifica la anterior.
 
 ## Alternativas y errores
 
@@ -168,8 +169,9 @@
 | Modelos de Dominio | `PerfilProfesional`, `EvaluacionOferta`, `Coincidencia`, `Brecha`, `DatoPendiente`, `TipoAspecto`, `EstadoEvaluacion` | `opportunities/domain` |
 | Puerto de Entrada | `EvaluarOfertaUseCase`, `EvaluarOfertaCommand` | `opportunities/application/port/in` |
 | Puerto de Salida | `EvaluacionOfertaRepository` | `opportunities/application/port/out` |
-| Servicio de Aplicación | `EvaluarOfertaService` | `opportunities/application/service` |
+| Servicio de Aplicación | `EvaluarOfertaService`, `ConsultarEvaluacionService` | `opportunities/application/service` |
 | Adaptador en Memoria | `InMemoryEvaluacionOfertaRepository` | `opportunities/adapter/out/persistence` |
+| Adaptador PostgreSQL | `JpaEvaluacionOfertaRepository` | `opportunities/adapter/out/persistence` |
 
 ## Criterios de aceptación
 
@@ -178,14 +180,17 @@
 - Evaluar un perfil que rechaza la modalidad presencial contra una oferta `ONSITE` devuelve brecha bloqueante y estado `NO_COMPATIBLE`.
 - Evaluar una oferta sin salario registrado genera un `DatoPendiente` indicando verificar el rango salarial en la entrevista.
 - Diferencias de mayúsculas ("Java" vs "java") se reconocen como coincidencia plena.
-- La evaluación queda guardada en el repositorio y puede ser recuperada por su identificador.
+- La evaluación queda guardada y puede recuperarse por su identificador, con coincidencias, brechas, datos pendientes y las copias de perfil y oferta, también después de reiniciar.
+- El salario ausente en la evidencia sigue ausente.
+- Dos evaluaciones del mismo par conservan dos identificadores. La segunda no altera la primera.
 
 ## Decisiones y pendientes
 
 - **Confirmado:** Dominio puro sin Spring ni dependencias externas; Aggregate Root `EvaluacionOferta` con método factory `evaluar(...)`.
-- **Pendiente para M4:** Mapeo de entidades JPA / PostgreSQL.
-- **Pendiente para M5:** Adaptador LLM para análisis semántico profundo de descripciones no estructuradas.
+- **Confirmado en M4:** la evaluación y su evidencia se guardan en PostgreSQL y se leen igual tras reiniciar. El cálculo sigue siendo `EvaluacionOferta.evaluar`.
+- **Pendiente para M5:** Adaptador LLM para análisis semántico profundo de descripciones no estructuradas. No está implementado.
 
 ## Historial
 
 - 2026-09-30: Creación y especificación formal de UC-002.
+- 2026-10-09: la evaluación y su evidencia sobreviven al reinicio. Una evaluación nueva no reemplaza la anterior.

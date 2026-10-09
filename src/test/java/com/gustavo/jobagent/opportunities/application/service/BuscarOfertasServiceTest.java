@@ -1,8 +1,11 @@
 package com.gustavo.jobagent.opportunities.application.service;
 
 import com.gustavo.jobagent.opportunities.application.port.in.FuentesNoDisponiblesException;
+import com.gustavo.jobagent.opportunities.application.port.in.RegistroBusqueda;
 import com.gustavo.jobagent.opportunities.application.port.in.ResultadoBusquedaOfertas;
+import com.gustavo.jobagent.opportunities.application.port.in.ResultadoRegistroBusqueda;
 import com.gustavo.jobagent.opportunities.application.port.out.BuscarOfertasPort;
+import com.gustavo.jobagent.opportunities.application.port.out.RegistroBusquedaRepository;
 import com.gustavo.jobagent.opportunities.domain.CriteriosBusqueda;
 import com.gustavo.jobagent.opportunities.domain.ModalidadTrabajo;
 import com.gustavo.jobagent.opportunities.domain.OfertaLaboral;
@@ -153,6 +156,63 @@ class BuscarOfertasServiceTest {
         assertThat(resultado.ofertas()).hasSize(2);
     }
 
+    @Test
+    @DisplayName("Registra el resultado de la búsqueda y no depende de un repositorio de ofertas")
+    void registraBusquedaSinRegistrarOfertas() {
+        RegistroCaptura registro = new RegistroCaptura();
+        OfertaLaboral oferta = OfertaLaboral.builder()
+                .idFuente("1").fuenteId("SIM").titulo("Backend Java").urlOriginal("https://example.com/1").build();
+        BuscarOfertasService service = new BuscarOfertasService(
+                List.of(new FakeBuscarOfertasPort("SIM", true, List.of(oferta))),
+                registro
+        );
+
+        service.buscar(new CriteriosBusqueda("Backend"));
+        service.buscar(new CriteriosBusqueda("Nada-que-no-existe"));
+
+        assertThat(registro.guardados).extracting(RegistroBusqueda::resultado)
+                .containsExactly(ResultadoRegistroBusqueda.CON_RESULTADOS, ResultadoRegistroBusqueda.RESULTADO_VACIO);
+    }
+
+    @Test
+    @DisplayName("Clasifica fallo parcial, fallo total y ausencia de fuentes")
+    void clasificaResultadosDeRegistro() {
+        RegistroCaptura registro = new RegistroCaptura();
+        BuscarOfertasPort exitosa = new FakeBuscarOfertasPort("OK", true, List.of(
+                OfertaLaboral.builder().idFuente("1").fuenteId("OK").titulo("Backend").build()));
+        BuscarOfertasPort fallida = new BuscarOfertasPort() {
+            @Override
+            public String fuenteId() {
+                return "FALLA";
+            }
+
+            @Override
+            public boolean estaHabilitada() {
+                return true;
+            }
+
+            @Override
+            public List<OfertaLaboral> buscar(CriteriosBusqueda criterios) {
+                throw new RuntimeException("caida");
+            }
+        };
+
+        new BuscarOfertasService(List.of(exitosa, fallida), registro).buscar(new CriteriosBusqueda("Backend"));
+        assertThatThrownBy(() -> new BuscarOfertasService(List.of(fallida), registro).buscar(new CriteriosBusqueda("Backend")))
+                .isInstanceOf(FuentesNoDisponiblesException.class);
+        assertThatThrownBy(() -> new BuscarOfertasService(List.of(new FakeBuscarOfertasPort("OFF", false, List.of())), registro)
+                .buscar(new CriteriosBusqueda("Backend")))
+                .isInstanceOf(FuentesNoDisponiblesException.class);
+
+        assertThat(registro.guardados).extracting(RegistroBusqueda::resultado).containsExactly(
+                ResultadoRegistroBusqueda.FALLO_PARCIAL,
+                ResultadoRegistroBusqueda.BUSQUEDA_FALLIDA,
+                ResultadoRegistroBusqueda.SIN_FUENTES_HABILITADAS
+        );
+        assertThat(registro.guardados.get(2).advertencias()).isEmpty();
+        assertThat(registro.guardados.get(2).fuentesConsultadas()).isEmpty();
+    }
+
     private static class FakeBuscarOfertasPort implements BuscarOfertasPort {
         private final String fuenteId;
         private final boolean habilitada;
@@ -177,6 +237,21 @@ class BuscarOfertasServiceTest {
         @Override
         public List<OfertaLaboral> buscar(CriteriosBusqueda criterios) {
             return catalogo;
+        }
+    }
+
+    private static final class RegistroCaptura implements RegistroBusquedaRepository {
+        private final List<RegistroBusqueda> guardados = new java.util.ArrayList<>();
+
+        @Override
+        public RegistroBusqueda guardar(RegistroBusqueda registro) {
+            guardados.add(registro);
+            return registro;
+        }
+
+        @Override
+        public java.util.Optional<RegistroBusqueda> buscarPorId(String id) {
+            return guardados.stream().filter(registro -> registro.id().equals(id)).findFirst();
         }
     }
 }

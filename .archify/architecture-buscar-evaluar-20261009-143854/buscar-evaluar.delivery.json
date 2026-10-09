@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "588bb54f-be8f-4a87-afeb-f955fa38e4b2",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/.archify/architecture-buscar-evaluar-20261009-143854/candidate.json",
+  "output": "/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/.archify/architecture-buscar-evaluar-20261009-143854/buscar-evaluar.html",
+  "specification": {
+    "sha256": "4abe53a6b11d820a4980f8f965fa2c697c4021c8aa87e1074324d34fd26a5cf7",
+    "bytes": 39985
+  },
+  "artifact": {
+    "sha256": "8de3239deef3f3a9e79d94428ae05ff23bda135a8ea9f6ec97ef7b368a497f85",
+    "bytes": 770893
+  }
+}

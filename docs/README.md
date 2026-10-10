@@ -6,8 +6,8 @@ Este directorio conserva los casos de uso y decisiones de implementación junto 
 
 | Identificador | Caso | Estado |
 |---|---|---|
-| UC-001 | [Buscar ofertas de empleo](casos-de-uso/UC-001-buscar-ofertas.md) | Implementado. La búsqueda se registra y no guarda ofertas ni evaluaciones |
-| UC-002 | [Evaluar oferta de empleo](casos-de-uso/UC-002-evaluar-oferta.md) | Implementado. La evaluación y su evidencia se recuperan después de reiniciar |
+| UC-001 | [Buscar ofertas de empleo](casos-de-uso/UC-001-buscar-ofertas.md) | Implementado. La búsqueda se registra, no guarda ofertas ni evaluaciones, y no consulta portales reales |
+| UC-002 | [Evaluar oferta de empleo](casos-de-uso/UC-002-evaluar-oferta.md) | Implementado. La evaluación, su evidencia y la propuesta se recuperan después de reiniciar |
 
 ## Decisiones arquitectónicas y patrones
 
@@ -18,7 +18,7 @@ Este directorio conserva los casos de uso y decisiones de implementación junto 
 - [Handoff 1 — Base técnica M0 y especificación UC-001](handsoff/handsoff_1.md)
 - [Handoff 2 — Implementación integral de UC-001 y UC-002](handsoff/handsoff_2.md)
 
-Registrar una oferta y consultar la evaluación guardada forman parte de la persistencia de M4. Registrar perfil sigue sin ficha ni implementación. Los portales reales y el LLM no están hechos.
+Registrar una oferta y consultar la evaluación guardada forman parte de la persistencia de M4. M4.1 dejó dictamen de vía no comprobada para LinkedIn, Indeed y Glassdoor; siguen pendientes y deshabilitadas. M5 adjunta una propuesta de lenguaje que no sustituye el cálculo; el adaptador predeterminado no llama a un servicio. Registrar perfil sigue sin ficha ni implementación.
 
 ## Cómo mantener esta memoria
 

@@ -53,6 +53,11 @@ public class EvaluacionJpaEntity {
     @OrderColumn(name = "orden")
     private List<EvaluacionDatoPendienteJpaEntity> datosPendientes = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "evaluacion_observacion", joinColumns = @JoinColumn(name = "evaluacion_id"))
+    @OrderColumn(name = "orden")
+    private List<EvaluacionObservacionJpaEntity> observaciones = new ArrayList<>();
+
     public static EvaluacionJpaEntity desde(EvaluacionOferta evaluacion) {
         EvaluacionJpaEntity fila = new EvaluacionJpaEntity();
         fila.id = evaluacion.id();
@@ -63,6 +68,7 @@ public class EvaluacionJpaEntity {
         fila.coincidencias = new ArrayList<>(evaluacion.coincidencias().stream().map(EvaluacionCoincidenciaJpaEntity::desde).toList());
         fila.brechas = new ArrayList<>(evaluacion.brechas().stream().map(EvaluacionBrechaJpaEntity::desde).toList());
         fila.datosPendientes = new ArrayList<>(evaluacion.datosPendientes().stream().map(EvaluacionDatoPendienteJpaEntity::desde).toList());
+        fila.observaciones = new ArrayList<>(evaluacion.observaciones().stream().map(EvaluacionObservacionJpaEntity::desde).toList());
         return fila;
     }
 
@@ -75,7 +81,10 @@ public class EvaluacionJpaEntity {
                 coincidencias.stream().map(EvaluacionCoincidenciaJpaEntity::aDominio).toList(),
                 brechas.stream().map(EvaluacionBrechaJpaEntity::aDominio).toList(),
                 datosPendientes.stream().map(EvaluacionDatoPendienteJpaEntity::aDominio).toList(),
-                fechaEvaluacion
+                fechaEvaluacion,
+                observaciones == null
+                        ? List.of()
+                        : observaciones.stream().map(EvaluacionObservacionJpaEntity::aDominio).toList()
         );
     }
 }

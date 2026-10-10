@@ -27,6 +27,15 @@ class ArchitectureBoundariesTest {
                 assertThat(fuente).doesNotContain("org.springframework");
                 assertThat(fuente).doesNotContain("jakarta.persistence");
                 assertThat(fuente).doesNotContain("org.hibernate");
+                assertThat(fuente).doesNotContain("java.net.http");
+                assertThat(fuente).doesNotContain("org.apache.hc");
+                assertThat(fuente).doesNotContain("okhttp");
+                assertThat(fuente).doesNotContain("com.linkedin");
+                assertThat(fuente).doesNotContain("com.indeed");
+                assertThat(fuente).doesNotContain("com.glassdoor");
+                assertThat(fuente).doesNotContain("com.openai");
+                assertThat(fuente).doesNotContain("dev.langchain4j");
+                assertThat(fuente).doesNotContain("com.anthropic");
             });
         }
     }

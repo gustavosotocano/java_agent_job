@@ -15,8 +15,8 @@ El primer incremento implementable será BuscarOfertasDeEmpleo (UC-001), con cri
 | M2 — Aplicación | Registrar oferta, evaluar y consultar; BuscarOfertasPort; repositorio en memoria, fuente y modelo simulados | Búsqueda y evaluación reproducibles sin acceso externo |
 | M3 — REST | DTOs, validación, errores, búsqueda y configuración de fuentes; composición Spring | Flujo buscar → registrar → evaluar → consultar probado por HTTP |
 | M4 — Persistencia (entregado en este incremento) | PostgreSQL, migraciones, evaluaciones con evidencia, ofertas con procedencia, fuentes y registro de búsquedas | La evaluación se lee igual tras reiniciar; reimportar no duplica; buscar registra el resultado y no guarda ofertas ni evaluaciones |
-| M4.1 — Portales públicos | Verificar acceso de cada portal; implementar adaptadores disponibles, normalización y fallos parciales | Al menos una fuente real verificada; fuentes pendientes declaradas y fallos aislados |
-| M5 — LLM | Adaptador intercambiable, salida estructurada, validación, timeouts y errores | Respuestas inválidas o fallos del proveedor no corrompen dominio |
+| M4.1 — Portales públicos (entregado) | Verificar LinkedIn, Indeed y Glassdoor; implementar solo el acceso comprobado | Los tres tienen dictamen de vía no comprobada, siguen pendientes y deshabilitados, y no hay fuente real nueva |
+| M5 — LLM (entregado) | Adaptador intercambiable, salida estructurada, validación, timeouts y errores | El adaptador predeterminado no llama a un servicio. Una respuesta inválida o un fallo dejan el cálculo intacto y la propuesta vacía |
 | M6 — Agente | Herramientas buscarOfertas, consultarPerfil, consultarOferta, guardarEvaluacion; ejecución acotada | Llamadas autorizadas, máximo de pasos y finalización observable |
 | M7 — Calidad | Logs, métricas, pruebas de arquitectura, refactor y revisión de code smells | Dependencias respetan límites y flujo completo verificable |
 
@@ -90,12 +90,14 @@ M3 organizó el recorrido de búsqueda por HTTP. Pruebas: dominio → casos de u
 
 ## Próximo paso
 
-M4 queda cerrado para este incremento: la evaluación y su evidencia sobreviven al reinicio, reimportar una oferta no la duplica, y cada búsqueda queda registrada sin guardar ofertas ni evaluaciones. LinkedIn, Indeed y Glassdoor siguen pendientes y deshabilitadas. El LLM no está integrado.
+M5 queda cerrado: la evaluación sigue siendo determinista. La propuesta es una sección aparte, el adaptador predeterminado no llama a un servicio y un fallo no cambia el estado. LinkedIn, Indeed y Glassdoor siguen pendientes y deshabilitados.
 
-El siguiente hito es M4.1: verificar el acceso de cada portal antes de implementar un adaptador. No hay integración real prometida.
+El siguiente hito es M6: herramientas de agente con ejecución acotada.
 
 ## Historial del plan
 
 - 2026-09-30: se incorpora docs/ como memoria versionada y se prioriza UC-001 con fuente simulada. Se conservan los hitos de persistencia, portales públicos, LLM y agente.
 - 2026-10-09: M4 persiste evaluaciones, ofertas y búsquedas. Buscar sigue sin registrar ofertas ni evaluar. Los portales reales y el LLM siguen pendientes.
+- 2026-10-10: M4.1 verifica los tres portales y no agrega adaptador. Siguen pendientes y deshabilitados. El LLM sigue pendiente.
+- 2026-10-10: M5 agrega un puerto de propuesta intercambiable. No sustituye el cálculo ni llama a un proveedor comercial.
 

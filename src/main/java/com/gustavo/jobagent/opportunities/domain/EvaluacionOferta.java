@@ -21,7 +21,8 @@ public record EvaluacionOferta(
         List<Coincidencia> coincidencias,
         List<Brecha> brechas,
         List<DatoPendiente> datosPendientes,
-        Instant fechaEvaluacion
+        Instant fechaEvaluacion,
+        List<ObservacionPropuesta> observaciones
 ) {
     public EvaluacionOferta {
         if (id == null || id.isBlank()) {
@@ -42,6 +43,24 @@ public record EvaluacionOferta(
         coincidencias = (coincidencias != null) ? List.copyOf(coincidencias) : List.of();
         brechas = (brechas != null) ? List.copyOf(brechas) : List.of();
         datosPendientes = (datosPendientes != null) ? List.copyOf(datosPendientes) : List.of();
+        observaciones = (observaciones != null) ? List.copyOf(observaciones) : List.of();
+    }
+
+    /**
+     * Copia la evaluación calculada y sustituye solo la lista de observaciones.
+     */
+    public EvaluacionOferta conObservaciones(List<ObservacionPropuesta> nuevas) {
+        return new EvaluacionOferta(
+                id,
+                idOferta,
+                idPerfil,
+                estado,
+                coincidencias,
+                brechas,
+                datosPendientes,
+                fechaEvaluacion,
+                nuevas
+        );
     }
 
     /**
@@ -218,7 +237,8 @@ public record EvaluacionOferta(
                 coincidencias,
                 brechas,
                 datosPendientes,
-                fechaEvaluacion
+                fechaEvaluacion,
+                List.of()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.gustavo.jobagent.opportunities.application.service;
 
+import com.gustavo.jobagent.opportunities.adapter.out.lenguaje.PropuestaVaciaAdapter;
 import com.gustavo.jobagent.opportunities.application.port.in.EvaluarOfertaCommand;
 import com.gustavo.jobagent.opportunities.application.port.out.EvaluacionOfertaRepository;
 import com.gustavo.jobagent.opportunities.domain.EstadoEvaluacion;
@@ -15,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +35,7 @@ class EvaluarOfertaServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new EvaluarOfertaService(repository);
+        service = new EvaluarOfertaService(repository, new PropuestaVaciaAdapter(), Duration.ofSeconds(2));
     }
 
     @Test

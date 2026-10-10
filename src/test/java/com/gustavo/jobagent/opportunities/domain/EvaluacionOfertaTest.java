@@ -183,7 +183,7 @@ class EvaluacionOfertaTest {
     @Test
     @DisplayName("Invariantes: constructor rechaza campos obligatorios nulos o vacíos")
     void validacionInvariantes() {
-        assertThatThrownBy(() -> new EvaluacionOferta(null, "sim-001", "perf-001", EstadoEvaluacion.COMPATIBLE, null, null, null, Instant.now()))
+        assertThatThrownBy(() -> new EvaluacionOferta(null, "sim-001", "perf-001", EstadoEvaluacion.COMPATIBLE, null, null, null, Instant.now(), null))
                 .isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> EvaluacionOferta.evaluar(null, null))

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "30d5052b-0cbb-4f53-b4ed-0bd6e3b896d4",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/.archify/lifecycle-busqueda-20261010-092020/candidate.json",
+  "output": "/Users/gustavosoto1/Documents/project/AgentBuscaEmpleo/job-agent/.archify/lifecycle-busqueda-20261010-092020/busqueda.html",
+  "specification": {
+    "sha256": "d26b66febf056471d4dfc3cd1150bffdb6f0f85a74a09db5c1e59bb0efc719aa",
+    "bytes": 38082
+  },
+  "artifact": {
+    "sha256": "402feb95501fc6a86f9df417a345c0a84fdbb9adaab63f01d75c192d74bacc12",
+    "bytes": 768916
+  }
+}

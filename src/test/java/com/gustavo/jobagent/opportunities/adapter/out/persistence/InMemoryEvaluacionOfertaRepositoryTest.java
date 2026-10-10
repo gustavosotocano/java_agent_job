@@ -33,7 +33,8 @@ class InMemoryEvaluacionOfertaRepositoryTest {
                 List.of(),
                 List.of(),
                 List.of(),
-                Instant.now()
+                Instant.now(),
+                List.of()
         );
 
         repository.guardar(evaluacion);
@@ -47,9 +48,9 @@ class InMemoryEvaluacionOfertaRepositoryTest {
     @Test
     @DisplayName("Debe buscar evaluaciones por perfil y por oferta")
     void debeBuscarPorPerfilYOferta() {
-        EvaluacionOferta ev1 = new EvaluacionOferta("e1", "of-1", "perf-A", EstadoEvaluacion.COMPATIBLE, List.of(), List.of(), List.of(), Instant.now());
-        EvaluacionOferta ev2 = new EvaluacionOferta("e2", "of-2", "perf-A", EstadoEvaluacion.COMPATIBLE_CON_BRECHAS, List.of(), List.of(), List.of(), Instant.now());
-        EvaluacionOferta ev3 = new EvaluacionOferta("e3", "of-1", "perf-B", EstadoEvaluacion.NO_COMPATIBLE, List.of(), List.of(), List.of(), Instant.now());
+        EvaluacionOferta ev1 = new EvaluacionOferta("e1", "of-1", "perf-A", EstadoEvaluacion.COMPATIBLE, List.of(), List.of(), List.of(), Instant.now(), List.of());
+        EvaluacionOferta ev2 = new EvaluacionOferta("e2", "of-2", "perf-A", EstadoEvaluacion.COMPATIBLE_CON_BRECHAS, List.of(), List.of(), List.of(), Instant.now(), List.of());
+        EvaluacionOferta ev3 = new EvaluacionOferta("e3", "of-1", "perf-B", EstadoEvaluacion.NO_COMPATIBLE, List.of(), List.of(), List.of(), Instant.now(), List.of());
 
         repository.guardar(ev1);
         repository.guardar(ev2);

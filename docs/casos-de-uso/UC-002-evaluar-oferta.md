@@ -1,9 +1,9 @@
 # UC-002 — Evaluar oferta de empleo
 
-- Estado: Implementado. La evaluación y su evidencia se recuperan después de reiniciar.
-- Última actualización: 2026-10-09.
+- Estado: Implementado. La evaluación, su evidencia y la propuesta se recuperan después de reiniciar.
+- Última actualización: 2026-10-10.
 - Actor: Candidato en búsqueda de empleo.
-- Hitos: Modelo de dominio y evaluación determinista en M1–M3. M4 persiste el agregado y las copias de perfil y oferta. El enriquecimiento con LLM sigue proyectado en M5.
+- Hitos: Modelo de dominio y evaluación determinista en M1–M3. M4 persiste el agregado y las copias de perfil y oferta. M5 adjunta una propuesta intercambiable que no cambia el cálculo.
 
 ## Objetivo y actor
 
@@ -21,9 +21,10 @@
 - Generación del Aggregate Root `EvaluacionOferta` con trazabilidad temporal (`fechaEvaluacion`).
 - Persistencia de solo inserción del agregado y de una copia inmutable del perfil y de la oferta usados en esa evaluación.
 - Consulta de esa evaluación después de reiniciar el proceso, con salario ausente conservado como ausente.
+- Propuesta opcional, citada y separada del cálculo. Si no hay proveedor, queda vacía.
 
 ### Exclusiones
-- Inferencia mediante modelos LLM (se incorporará como puerto de enriquecimiento en Hito M5).
+- Sustituir el estado, las coincidencias, las brechas o los datos pendientes por una propuesta del modelo de lenguaje.
 - Postulación automática a plataformas externas.
 - Reescritura de una evaluación ya guardada. Una segunda evaluación del mismo par es otro agregado.
 - Asunción arbitraria de porcentajes numéricos de compatibilidad.
@@ -188,9 +189,10 @@
 
 - **Confirmado:** Dominio puro sin Spring ni dependencias externas; Aggregate Root `EvaluacionOferta` con método factory `evaluar(...)`.
 - **Confirmado en M4:** la evaluación y su evidencia se guardan en PostgreSQL y se leen igual tras reiniciar. El cálculo sigue siendo `EvaluacionOferta.evaluar`.
-- **Pendiente para M5:** Adaptador LLM para análisis semántico profundo de descripciones no estructuradas. No está implementado.
+- **Confirmado en M5:** la propuesta es una lista aparte. `evaluar` sigue dejando esa lista vacía. El adaptador predeterminado no llama a un servicio. Un fallo, un texto ilegible o el tiempo agotado guardan la evaluación con cero observaciones. Los portales reales siguen como en M4.1.
 
 ## Historial
 
 - 2026-09-30: Creación y especificación formal de UC-002.
 - 2026-10-09: la evaluación y su evidencia sobreviven al reinicio. Una evaluación nueva no reemplaza la anterior.
+- 2026-10-10: la propuesta se guarda con la evaluación y no cambia el cálculo. Sin proveedor comercial, queda vacía.

@@ -213,6 +213,39 @@ class BuscarOfertasServiceTest {
         assertThat(registro.guardados.get(2).fuentesConsultadas()).isEmpty();
     }
 
+    @Test
+    @DisplayName("Un fallo parcial deja las ofertas válidas y exactamente una advertencia")
+    void aislamientoDejaResultadosYUnaAdvertencia() {
+        RegistroCaptura registro = new RegistroCaptura();
+        BuscarOfertasPort exitosa = new FakeBuscarOfertasPort("OK", true, List.of(
+                OfertaLaboral.builder().idFuente("1").fuenteId("OK").titulo("Backend").build()));
+        BuscarOfertasPort fallida = new BuscarOfertasPort() {
+            @Override
+            public String fuenteId() {
+                return "FALLA";
+            }
+
+            @Override
+            public boolean estaHabilitada() {
+                return true;
+            }
+
+            @Override
+            public List<OfertaLaboral> buscar(CriteriosBusqueda criterios) {
+                throw new RuntimeException("caida");
+            }
+        };
+
+        ResultadoBusquedaOfertas resultado = new BuscarOfertasService(List.of(exitosa, fallida), registro)
+                .buscar(new CriteriosBusqueda("Backend"));
+
+        assertThat(resultado.ofertas()).extracting(OfertaLaboral::fuenteId).containsExactly("OK");
+        assertThat(resultado.advertencias()).hasSize(1);
+        assertThat(resultado.advertencias().getFirst().fuenteId()).isEqualTo("FALLA");
+        assertThat(registro.guardados).hasSize(1);
+        assertThat(registro.guardados.getFirst().resultado()).isEqualTo(ResultadoRegistroBusqueda.FALLO_PARCIAL);
+    }
+
     private static class FakeBuscarOfertasPort implements BuscarOfertasPort {
         private final String fuenteId;
         private final boolean habilitada;

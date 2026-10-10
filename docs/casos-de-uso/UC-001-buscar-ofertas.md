@@ -1,9 +1,9 @@
 # UC-001 — Buscar ofertas de empleo
 
 - Estado: Implementado. Cada búsqueda queda registrada. Buscar no registra ofertas ni evalúa.
-- Última actualización: 2026-10-09.
+- Última actualización: 2026-10-10.
 - Actor: persona que busca oportunidades laborales.
-- Hitos: M1–M3 entregados. M4 persiste el registro de la búsqueda y el estado de las fuentes. Los portales reales siguen en M4.1 y el LLM en M5.
+- Hitos: M1–M3 entregados. M4 persiste el registro de la búsqueda y el estado de las fuentes. M4.1 deja dictamen de vía no comprobada para LinkedIn, Indeed y Glassdoor. El LLM sigue en M5.
 
 ## Objetivo
 
@@ -134,9 +134,10 @@ La verificación usa pruebas del caso de uso con fuentes falsas, la prueba HTTP 
 
 Confirmado: comenzar con fuente simulada y búsqueda determinista; IA posterior para evaluación.
 
-Pendiente: verificar mecanismos permitidos de integración para LinkedIn, Indeed, Glassdoor y otras fuentes. Esas fuentes quedan sembradas como `PENDIENTE` y deshabilitadas. No se promete acceso funcional a estos portales.
+Confirmado en M4.1: LinkedIn, Indeed y Glassdoor tienen dictamen de vía no comprobada. Siguen `PENDIENTE` y deshabilitadas. No hay fuente real nueva. La simulada sigue disponible. No se promete una integración futura ni el LLM.
 
 ## Historial
 
 - 2026-09-30: definición inicial del primer caso de uso implementable.
 - 2026-10-09: la búsqueda se registra en PostgreSQL y sigue sin registrar ofertas ni evaluar.
+- 2026-10-10: M4.1 registra que LinkedIn, Indeed y Glassdoor no tienen vía pública comprobada. La búsqueda no los consulta.

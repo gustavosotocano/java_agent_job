@@ -1,6 +1,6 @@
 {
-  "feature_directory": "specs/003-swap-language-adapter",
-  "description": "M5: adaptador de lenguaje intercambiable que no reemplaza el cálculo determinista de la evaluación.",
+  "feature_directory": "specs/004-bound-agent-tools",
+  "description": "M6: herramientas buscarOfertas, consultarPerfil, consultarOferta y guardarEvaluacion, con ejecución acotada.",
   "phase": "converge",
   "status": "complete",
   "converge_passes": 1,

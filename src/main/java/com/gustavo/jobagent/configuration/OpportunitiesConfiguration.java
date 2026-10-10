@@ -22,6 +22,7 @@ import com.gustavo.jobagent.opportunities.application.port.in.ConsultarDictamenA
 import com.gustavo.jobagent.opportunities.application.port.in.ConsultarEvaluacionUseCase;
 import com.gustavo.jobagent.opportunities.application.port.in.ConsultarOfertaUseCase;
 import com.gustavo.jobagent.opportunities.application.port.in.ConsultarRegistroBusquedaUseCase;
+import com.gustavo.jobagent.opportunities.application.port.in.EjecutarAgenteUseCase;
 import com.gustavo.jobagent.opportunities.application.port.in.EvaluarOfertaUseCase;
 import com.gustavo.jobagent.opportunities.application.port.in.RegistrarOfertaUseCase;
 import com.gustavo.jobagent.opportunities.application.port.out.BuscarOfertasPort;
@@ -36,6 +37,7 @@ import com.gustavo.jobagent.opportunities.application.service.ConsultarDictamenA
 import com.gustavo.jobagent.opportunities.application.service.ConsultarEvaluacionService;
 import com.gustavo.jobagent.opportunities.application.service.ConsultarOfertaService;
 import com.gustavo.jobagent.opportunities.application.service.ConsultarRegistroBusquedaService;
+import com.gustavo.jobagent.opportunities.application.service.EjecutarAgenteService;
 import com.gustavo.jobagent.opportunities.application.service.EvaluarOfertaService;
 import com.gustavo.jobagent.opportunities.application.service.RegistrarOfertaService;
 import org.springframework.beans.factory.ObjectProvider;
@@ -129,6 +131,15 @@ public class OpportunitiesConfiguration {
     @Bean
     public ConsultarEvaluacionUseCase consultarEvaluacionUseCase(EvaluacionOfertaRepository evaluacionOfertaRepository) {
         return new ConsultarEvaluacionService(evaluacionOfertaRepository);
+    }
+
+    @Bean
+    public EjecutarAgenteUseCase ejecutarAgenteUseCase(
+            BuscarOfertasUseCase buscarOfertas,
+            ConsultarOfertaUseCase consultarOferta,
+            EvaluarOfertaUseCase evaluarOferta
+    ) {
+        return new EjecutarAgenteService(buscarOfertas, consultarOferta, evaluarOferta);
     }
 
     @Bean

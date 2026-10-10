@@ -36,6 +36,8 @@ class ArchitectureBoundariesTest {
                 assertThat(fuente).doesNotContain("com.openai");
                 assertThat(fuente).doesNotContain("dev.langchain4j");
                 assertThat(fuente).doesNotContain("com.anthropic");
+                assertThat(fuente).doesNotContain("EjecutarAgenteUseCase");
+                assertThat(fuente).doesNotContain("io.modelcontextprotocol");
             });
         }
     }
